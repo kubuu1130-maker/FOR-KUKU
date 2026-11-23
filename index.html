@@ -20,7 +20,9 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
 
-    body {
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden;
       font-family: 'Plus Jakarta Sans', sans-serif;
       background-color: #f8fafc;
       color: #0f172a;
@@ -99,6 +101,22 @@
       const [currentNoteText, setCurrentNoteText] = useState('');
       const [selectedMcqOption, setSelectedMcqOption] = useState(null);
       const [caseStudyAnswers, setCaseStudyAnswers] = useState({});
+      const [isFullScreen, setIsFullScreen] = useState(false);
+
+      // Keyboard shortcut listener for Esc key (exit fullscreen or close modal)
+      useEffect(() => {
+        const handleKeyDown = (e) => {
+          if (e.key === 'Escape') {
+            if (isFullScreen) {
+              setIsFullScreen(false);
+            } else if (activeQuestion) {
+              setActiveQuestion(null);
+            }
+          }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+      }, [isFullScreen, activeQuestion]);
 
       // Test Series State
       const [testActive, setTestActive] = useState(false);
@@ -366,8 +384,8 @@
                   </span>
                 </div>
 
-                {/* Center Navigation Pills */}
-                <div className="flex items-center bg-black/25 p-1 rounded-full border border-white/15 text-xs font-bold">
+                {/* Center Navigation Pills (Desktop) */}
+                <div className="hidden md:flex items-center bg-black/25 p-1 rounded-full border border-white/15 text-xs font-bold">
                   <button
                     onClick={() => { setNavSection('Past Papers'); setCurrentView('subjects'); }}
                     className={`px-4 py-1.5 rounded-full transition cursor-pointer ${navSection === 'Past Papers'
@@ -406,7 +424,7 @@
                     Help
                   </button>
 
-                  <div className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 px-3 py-1 rounded-full cursor-pointer transition border border-white/20">
+                  <div className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 px-2.5 sm:px-3 py-1 rounded-full cursor-pointer transition border border-white/20">
                     <span className="size-5 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center font-bold text-[10px]">
                       K
                     </span>
@@ -416,6 +434,37 @@
                 </div>
 
               </div>
+            </div>
+
+            {/* Mobile Sub-Header Navigation (Swipeable horizontal tabs on mobile) */}
+            <div className="md:hidden flex items-center gap-1.5 px-3 py-1.5 bg-[#252069] border-t border-white/10 overflow-x-auto text-xs font-bold text-white no-scrollbar">
+              <button
+                onClick={() => { setNavSection('Past Papers'); setCurrentView('subjects'); }}
+                className={`px-3 py-1 rounded-full transition flex-shrink-0 cursor-pointer text-[11px] ${navSection === 'Past Papers'
+                  ? 'bg-white text-indigo-950 shadow-xs'
+                  : 'text-white/80 hover:text-white'
+                  }`}
+              >
+                Past Papers
+              </button>
+              <button
+                onClick={() => { setNavSection('Test Series'); setCurrentView('testSeries'); }}
+                className={`px-3 py-1 rounded-full transition flex-shrink-0 cursor-pointer text-[11px] ${navSection === 'Test Series'
+                  ? 'bg-white text-indigo-950 shadow-xs'
+                  : 'text-white/80 hover:text-white'
+                  }`}
+              >
+                Test Series
+              </button>
+              <button
+                onClick={() => { setNavSection('Articles'); setCurrentView('trendAnalysis'); }}
+                className={`px-3 py-1 rounded-full transition flex-shrink-0 cursor-pointer text-[11px] ${navSection === 'Articles'
+                  ? 'bg-white text-indigo-950 shadow-xs'
+                  : 'text-white/80 hover:text-white'
+                  }`}
+              >
+                PYP Trends
+              </button>
             </div>
 
 
@@ -692,9 +741,89 @@
 
               </div>
 
-              {/* ── MAIN DATA TABLE (Matching Exact Website Format) ── */}
+              {/* ── MAIN DATA CONTAINER (Mobile Cards + Desktop Table) ── */}
               <div className="mt-4 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
+                
+                {/* ── MOBILE CARDS VIEW (block sm:hidden) ── */}
+                <div className="block sm:hidden divide-y divide-slate-100">
+                  {filteredQuestions.length === 0 ? (
+                    <div className="p-8 text-center text-slate-400 text-xs">
+                      No questions match your current filters.
+                    </div>
+                  ) : (
+                    filteredQuestions.map((q, idx) => {
+                      const isRead = readIds.includes(q.id);
+                      const isImp = importantIds.includes(q.id);
+                      const hasNote = Boolean(userNotes[q.id]);
+
+                      return (
+                        <div
+                          key={q.id}
+                          onClick={() => handleOpenQuestionModal(q)}
+                          className={`p-3.5 transition cursor-pointer active:bg-indigo-50/70 ${idx % 2 === 1 ? 'bg-slate-50/40' : 'bg-white'}`}
+                        >
+                          <div className="flex items-center justify-between gap-2 mb-1.5">
+                            <div className="flex items-center gap-1.5">
+                              <span className="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-mono font-bold text-[11px] border border-indigo-200">
+                                #{q.sn || idx + 1}
+                              </span>
+                              <span className="font-bold text-slate-900 text-xs">
+                                Q-{q.qNo}
+                              </span>
+                              {q.marks && q.marks !== '-' && (
+                                <span className="px-1.5 py-0.2 rounded bg-amber-50 text-amber-800 font-mono font-bold text-[10px] border border-amber-200">
+                                  {q.marks}M
+                                </span>
+                              )}
+                            </div>
+                            
+                            <div className="flex items-center gap-1.5">
+                              {isImp && <span className="text-amber-500 text-xs" title="Important">⭐</span>}
+                              {hasNote && <span className="text-emerald-500 text-xs" title="Notes">📝</span>}
+                              <button
+                                type="button"
+                                onClick={(e) => toggleRead(q.id, e)}
+                                className={`size-7 rounded-lg inline-flex items-center justify-center text-xs transition ${
+                                  isRead ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'
+                                }`}
+                                title={isRead ? 'Marked as Read' : 'Click to Mark Read'}
+                              >
+                                👁️
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="text-xs font-bold text-slate-900 mb-1 leading-snug">
+                            {q.topic}
+                          </div>
+                          <div className="text-[11px] text-slate-600 line-clamp-2 leading-relaxed mb-2">
+                            {q.subTopic || '-'}
+                          </div>
+
+                          <div className="flex items-center gap-1.5 flex-wrap text-[10px]">
+                            <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-mono font-semibold">
+                              {q.source}
+                            </span>
+                            <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-mono font-semibold">
+                              {q.year}
+                            </span>
+                            {activeTab === 'MCQs' && (
+                              <span className="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-bold border border-indigo-100">
+                                {q.type || 'Single MCQ'}
+                              </span>
+                            )}
+                            <span className="ml-auto text-purple-600 font-bold flex items-center gap-0.5">
+                              View →
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+
+                {/* ── DESKTOP TABLE VIEW (hidden sm:block) ── */}
+                <div className="hidden sm:block overflow-x-auto">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead className="bg-[#4338ca] text-white font-mono font-bold uppercase text-[11px] tracking-wider">
                       <tr>
@@ -1201,14 +1330,24 @@
           {/* INTERACTIVE QUESTION MODAL (Exact Replicate from Video Frames)    */}
           {/* ═════════════════════════════════════════════════════════════════ */}
           {activeQuestion && (
-            <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+            <div
+              className={`fixed inset-0 z-50 flex flex-col sm:items-center sm:justify-center overflow-y-auto transition-all duration-200 ${
+                isFullScreen
+                  ? 'bg-slate-950 p-0'
+                  : 'bg-black/60 backdrop-blur-xs p-0 sm:p-4 md:p-6'
+              }`}
+            >
               <div
-                className="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-4xl w-full my-auto overflow-hidden flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-200"
+                className={`bg-white shadow-2xl border-0 sm:border border-slate-200 flex flex-col overflow-hidden transition-all duration-200 ${
+                  isFullScreen
+                    ? 'w-screen h-screen max-w-none max-h-none rounded-none m-0'
+                    : 'w-full h-full sm:h-auto sm:max-w-5xl lg:max-w-6xl sm:max-h-[94vh] rounded-none sm:rounded-3xl my-0 sm:my-auto animate-in zoom-in-95'
+                }`}
                 onClick={(e) => e.stopPropagation()}
               >
 
                 {/* Modal Top Bar */}
-                <div className="p-3.5 sm:p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-3">
+                <div className="p-2.5 sm:p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-1.5 sm:gap-3">
 
                   {/* Copy Button */}
                   <button
@@ -1216,58 +1355,75 @@
                       navigator.clipboard.writeText(`${activeQuestion.question}\n\nAnswer:\n${activeQuestion.answer || activeQuestion.reason || ''}`);
                       alert("Question and solution copied to clipboard!");
                     }}
-                    className="size-8 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xs font-bold transition hover:bg-purple-700 cursor-pointer shadow-2xs"
+                    className="size-8 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xs font-bold transition hover:bg-purple-700 cursor-pointer shadow-2xs flex-shrink-0"
                     title="Copy Question"
                   >
                     📋
                   </button>
 
                   {/* Mode Selector (Both / Question / Answer) */}
-                  <div className="flex items-center bg-slate-200/80 p-1 rounded-full text-xs font-bold">
+                  <div className="flex items-center bg-slate-200/80 p-0.5 sm:p-1 rounded-full text-[11px] sm:text-xs font-bold">
                     <button
                       onClick={() => setModalMode('Both')}
-                      className={`px-3 py-1 rounded-full transition cursor-pointer ${modalMode === 'Both' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-700 hover:text-slate-900'
+                      className={`px-2.5 sm:px-3 py-1 rounded-full transition cursor-pointer ${modalMode === 'Both' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-700 hover:text-slate-900'
                         }`}
                     >
                       Both
                     </button>
                     <button
                       onClick={() => setModalMode('Question')}
-                      className={`px-3 py-1 rounded-full transition cursor-pointer ${modalMode === 'Question' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-700 hover:text-slate-900'
+                      className={`px-2.5 sm:px-3 py-1 rounded-full transition cursor-pointer ${modalMode === 'Question' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-700 hover:text-slate-900'
                         }`}
                     >
                       Question
                     </button>
                     <button
                       onClick={() => { setModalMode('Answer'); setShowAnswer(true); }}
-                      className={`px-3 py-1 rounded-full transition cursor-pointer ${modalMode === 'Answer' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-700 hover:text-slate-900'
+                      className={`px-2.5 sm:px-3 py-1 rounded-full transition cursor-pointer ${modalMode === 'Answer' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-700 hover:text-slate-900'
                         }`}
                     >
                       Answer
                     </button>
                   </div>
 
-                  {/* Close X Button */}
-                  <button
-                    onClick={() => setActiveQuestion(null)}
-                    className="size-8 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-sm hover:bg-purple-700 transition cursor-pointer"
-                  >
-                    ✕
-                  </button>
+                  {/* Action Buttons: Fullscreen + Close */}
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setIsFullScreen(!isFullScreen)}
+                      className="hidden sm:flex size-8 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 items-center justify-center font-bold text-xs transition cursor-pointer border border-slate-300"
+                      title={isFullScreen ? "Exit Fullscreen (Esc)" : "Expand to Fullscreen"}
+                    >
+                      {isFullScreen ? "⤢" : "⛶"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setActiveQuestion(null); setIsFullScreen(false); }}
+                      className="size-8 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-sm hover:bg-purple-700 transition cursor-pointer flex-shrink-0"
+                      title="Close (Esc)"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 </div>
 
                 {/* Metadata Strip */}
-                <div className="px-5 py-2.5 bg-indigo-50/70 border-b border-indigo-100 flex flex-wrap items-center justify-between gap-3 text-xs">
-                  <div className="flex items-center gap-2">
+                <div className="px-4 sm:px-6 py-2.5 bg-indigo-50/70 border-b border-indigo-100 flex flex-wrap items-center justify-between gap-2 sm:gap-3 text-xs flex-shrink-0">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-mono font-bold text-indigo-900 text-sm">
                       Question-{activeQuestion.qNo}
                     </span>
                     <span className="text-slate-400">·</span>
-                    <span className="text-slate-600 font-medium">{activeQuestion.topic}</span>
+                    <span className="text-slate-700 font-semibold">{activeQuestion.topic || activeQuestion.chapter}</span>
                     <span className="text-slate-400">·</span>
                     <span className="font-mono font-bold bg-white px-2 py-0.5 rounded text-indigo-700 border border-indigo-200">
-                      {activeQuestion.source} ({activeQuestion.year})
+                      {activeQuestion.source} {activeQuestion.year ? `(${activeQuestion.year})` : (activeQuestion.attempt ? `(${activeQuestion.attempt})` : '')}
                     </span>
+                    {activeQuestion.marks && (
+                      <span className="px-2 py-0.5 rounded font-mono font-bold text-[11px] bg-indigo-100 text-indigo-900">
+                        {activeQuestion.marks} Marks
+                      </span>
+                    )}
                   </div>
 
                   {/* Badges: Read & Important */}
@@ -1294,8 +1450,10 @@
                   </div>
                 </div>
 
-                {/* Modal Scrollable Body */}
-                <div className="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1">
+                {/* Modal Scrollable Body (Max Readability with Generous Spacing) */}
+                <div className={`p-4 sm:p-7 lg:p-9 overflow-y-auto space-y-6 flex-1 ${
+                  isFullScreen ? 'max-w-4xl mx-auto w-full' : ''
+                }`}>
 
                   {/* Case Scenario Box (if present) */}
                   {activeQuestion.caseScenario && modalMode !== 'Answer' && (
@@ -1309,9 +1467,8 @@
 
                   {/* Question Statement */}
                   {modalMode !== 'Answer' && (
-                    <div>
-                      <div
-                        className="text-xs sm:text-sm text-slate-900 leading-relaxed whitespace-pre-line"
+                    <div className="space-y-3">
+                      <div className="text-sm sm:text-base text-slate-900 leading-relaxed sm:leading-loose"
                         dangerouslySetInnerHTML={{ __html: activeQuestion.question }}
                       />
 
@@ -1425,7 +1582,7 @@
 
                       {activeQuestion.answer && (
                         <div
-                          className="prose prose-xs max-w-none text-slate-800"
+                          className="prose prose-sm max-w-none text-slate-900 leading-relaxed sm:leading-loose text-sm sm:text-base"
                           dangerouslySetInnerHTML={{ __html: activeQuestion.answer }}
                         />
                       )}
@@ -1465,17 +1622,17 @@
                 </div>
 
                 {/* Modal Footer Bar */}
-                <div className="p-3 sm:p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs font-bold">
-                  <div className="flex items-center gap-2">
+                <div className="p-2.5 sm:p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs font-bold gap-2">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
                     <button
                       onClick={() => handleNavigateQuestion('prev')}
-                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                      className="px-3 sm:px-4 py-1.5 sm:py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition cursor-pointer flex items-center gap-1 shadow-2xs text-xs"
                     >
-                      <span>← Previous</span>
+                      <span>← Prev</span>
                     </button>
                     <button
                       onClick={() => handleNavigateQuestion('next')}
-                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                      className="px-3 sm:px-4 py-1.5 sm:py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition cursor-pointer flex items-center gap-1 shadow-2xs text-xs"
                     >
                       <span>Next →</span>
                     </button>
@@ -1483,7 +1640,7 @@
 
                   <button
                     onClick={() => setShowNotesDrawer(!showNotesDrawer)}
-                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                    className="px-3 sm:px-4 py-1.5 sm:py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition cursor-pointer flex items-center gap-1 shadow-2xs text-xs"
                   >
                     <span>Notes</span>
                     <span>{showNotesDrawer ? '▼' : '▲'}</span>
