@@ -1,0 +1,248 @@
+[
+  {
+    "paper": "paper-3",
+    "position": 1,
+    "original_id": "p3_q1a_deprec",
+    "source_url": "https://www.castudypartner.com/questions/c137086ad0",
+    "title": "Question-1(a)",
+    "topic": "Profits and Gains of Business or Profession (PGBP)",
+    "sub_topic": "Section 32 - Depreciation and Additional Depreciation",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "7",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Profits and Gains of Business or Profession (PGBP) (Section 32 - Depreciation and Additional Depreciation) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "table",
+        "caption": "Statutory Analytical Table",
+        "html": "<table class=\"w-full text-xs border border-slate-400 border-collapse my-2\"><tr class=\"bg-indigo-50 font-bold\"><th class=\"border p-2\">Item</th><th class=\"border p-2 text-right\">Details</th></tr><tr><td class=\"border p-2 font-semibold\">Statutory Basis</td><td class=\"border p-2 text-right\">PGBP_SEC_32_DEPRECIATION</td></tr></table>"
+      },
+      {
+        "type": "answer",
+        "title": "Answer-1(a)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Profits and Gains of Business or Profession (PGBP)."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3"
+      ],
+      "tables": [
+        {
+          "id": "table_1"
+        }
+      ]
+    }
+  },
+  {
+    "paper": "paper-3",
+    "position": 2,
+    "original_id": "p3_q1b_itc",
+    "source_url": "https://www.castudypartner.com/questions/c137086ad0",
+    "title": "Question-1(b)",
+    "topic": "Input Tax Credit (ITC)",
+    "sub_topic": "Section 17(5) - Blocked Input Tax Credit under CGST Act",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "7",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Input Tax Credit (ITC) (Section 17(5) - Blocked Input Tax Credit under CGST Act) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "answer",
+        "title": "Answer-1(b)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Input Tax Credit (ITC)."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3",
+        "Part 4",
+        "Part 5",
+        "Part 6"
+      ],
+      "tables": []
+    }
+  },
+  {
+    "paper": "paper-3",
+    "position": 3,
+    "original_id": "p3_q2a_capgain",
+    "source_url": "https://www.castudypartner.com/questions/c137086ad0",
+    "title": "Question-2(a)",
+    "topic": "Capital Gains",
+    "sub_topic": "Section 50C - Stamp Duty Value Benchmark",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "6",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Capital Gains (Section 50C - Stamp Duty Value Benchmark) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "answer",
+        "title": "Answer-2(a)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Capital Gains."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2"
+      ],
+      "tables": []
+    }
+  },
+  {
+    "paper": "paper-3",
+    "position": 4,
+    "original_id": "p3_q2b_pos",
+    "source_url": "https://www.castudypartner.com/questions/c137086ad0",
+    "title": "Question-2(b)",
+    "topic": "Place of Supply",
+    "sub_topic": "Sections 10 & 12 of IGST Act",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "6",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Place of Supply (Sections 10 & 12 of IGST Act) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "answer",
+        "title": "Answer-2(b)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Place of Supply."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2"
+      ],
+      "tables": []
+    }
+  },
+  {
+    "paper": "paper-3",
+    "position": 5,
+    "original_id": "p3_q3a_salaries",
+    "source_url": "https://www.castudypartner.com/questions/c137086ad0",
+    "title": "Question-3(a)",
+    "topic": "Income from Salaries",
+    "sub_topic": "Standard Deduction & Perquisites under Sec 16 & 17",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "7",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Income from Salaries (Standard Deduction & Perquisites under Sec 16 & 17) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "table",
+        "caption": "Statutory Analytical Table",
+        "html": "<table class=\"w-full text-xs border border-slate-400 border-collapse my-2\"><tr class=\"bg-indigo-50 font-bold\"><th class=\"border p-2\">Item</th><th class=\"border p-2 text-right\">Details</th></tr><tr><td class=\"border p-2 font-semibold\">Statutory Basis</td><td class=\"border p-2 text-right\">SALARY_SEC_16IA_75K</td></tr></table>"
+      },
+      {
+        "type": "answer",
+        "title": "Answer-3(a)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Income from Salaries."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3"
+      ],
+      "tables": [
+        {
+          "id": "table_1"
+        }
+      ]
+    }
+  },
+  {
+    "paper": "paper-3",
+    "position": 6,
+    "original_id": "p3_q3b_tos",
+    "source_url": "https://www.castudypartner.com/questions/c137086ad0",
+    "title": "Question-3(b)",
+    "topic": "Time and Value of Supply",
+    "sub_topic": "Section 12 & 15 of CGST Act",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "6",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Time and Value of Supply (Section 12 & 15 of CGST Act) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "answer",
+        "title": "Answer-3(b)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Time and Value of Supply."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2"
+      ],
+      "tables": []
+    }
+  }
+]

@@ -1,0 +1,284 @@
+[
+  {
+    "paper": "paper-6",
+    "position": 1,
+    "original_id": "p6_q1a_leverages",
+    "source_url": "https://www.castudypartner.com/questions/e42387198f",
+    "title": "Question-1(a)",
+    "topic": "Financing Decisions - Leverages",
+    "sub_topic": "Degree of Operating Leverage (DOL), Financial Leverage (DFL) & Combined Leverage (DCL)",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "7",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Financing Decisions - Leverages (Degree of Operating Leverage (DOL), Financial Leverage (DFL) & Combined Leverage (DCL)) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "table",
+        "caption": "Statutory Analytical Table",
+        "html": "<table class=\"w-full text-xs border border-slate-400 border-collapse my-2\"><tr class=\"bg-indigo-50 font-bold\"><th class=\"border p-2\">Item</th><th class=\"border p-2 text-right\">Details</th></tr><tr><td class=\"border p-2 font-semibold\">Statutory Basis</td><td class=\"border p-2 text-right\">FM_LEVERAGES_DOL_DFL</td></tr></table>"
+      },
+      {
+        "type": "answer",
+        "title": "Answer-1(a)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Financing Decisions - Leverages."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3",
+        "Part 4",
+        "Part 5"
+      ],
+      "tables": [
+        {
+          "id": "table_1"
+        }
+      ]
+    }
+  },
+  {
+    "paper": "paper-6",
+    "position": 2,
+    "original_id": "p6_q1b_porter",
+    "source_url": "https://www.castudypartner.com/questions/e42387198f",
+    "title": "Question-1(b)",
+    "topic": "Strategic Analysis: External Environment",
+    "sub_topic": "Michael Porter's Five Forces Model of Industry Attractiveness",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "7",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Strategic Analysis: External Environment (Michael Porter's Five Forces Model of Industry Attractiveness) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "answer",
+        "title": "Answer-1(b)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Strategic Analysis: External Environment."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3",
+        "Part 4",
+        "Part 5"
+      ],
+      "tables": []
+    }
+  },
+  {
+    "paper": "paper-6",
+    "position": 3,
+    "original_id": "p6_q2a_capbudg",
+    "source_url": "https://www.castudypartner.com/questions/e42387198f",
+    "title": "Question-2(a)",
+    "topic": "Investment Decisions",
+    "sub_topic": "Net Present Value (NPV) & Internal Rate of Return (IRR)",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "10",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Investment Decisions (Net Present Value (NPV) & Internal Rate of Return (IRR)) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "table",
+        "caption": "Statutory Analytical Table",
+        "html": "<table class=\"w-full text-xs border border-slate-400 border-collapse my-2\"><tr class=\"bg-indigo-50 font-bold\"><th class=\"border p-2\">Item</th><th class=\"border p-2 text-right\">Details</th></tr><tr><td class=\"border p-2 font-semibold\">Statutory Basis</td><td class=\"border p-2 text-right\">FM_CAPITAL_BUDGETING_NPV</td></tr></table>"
+      },
+      {
+        "type": "answer",
+        "title": "Answer-2(a)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Investment Decisions."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3"
+      ],
+      "tables": [
+        {
+          "id": "table_1"
+        },
+        {
+          "id": "table_2"
+        }
+      ]
+    }
+  },
+  {
+    "paper": "paper-6",
+    "position": 4,
+    "original_id": "p6_q2b_bcg",
+    "source_url": "https://www.castudypartner.com/questions/e42387198f",
+    "title": "Question-2(b)",
+    "topic": "Strategic Choices",
+    "sub_topic": "BCG Growth-Share Matrix Analysis",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "5",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Strategic Choices (BCG Growth-Share Matrix Analysis) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "table",
+        "caption": "Statutory Analytical Table",
+        "html": "<table class=\"w-full text-xs border border-slate-400 border-collapse my-2\"><tr class=\"bg-indigo-50 font-bold\"><th class=\"border p-2\">Item</th><th class=\"border p-2 text-right\">Details</th></tr><tr><td class=\"border p-2 font-semibold\">Statutory Basis</td><td class=\"border p-2 text-right\">SM_BCG_MATRIX</td></tr></table>"
+      },
+      {
+        "type": "answer",
+        "title": "Answer-2(b)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Strategic Choices."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3",
+        "Part 4"
+      ],
+      "tables": [
+        {
+          "id": "table_1"
+        }
+      ]
+    }
+  },
+  {
+    "paper": "paper-6",
+    "position": 5,
+    "original_id": "p6_q3a_wacc",
+    "source_url": "https://www.castudypartner.com/questions/e42387198f",
+    "title": "Question-3(a)",
+    "topic": "Cost of Capital",
+    "sub_topic": "Weighted Average Cost of Capital (WACC)",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "8",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Cost of Capital (Weighted Average Cost of Capital (WACC)) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "table",
+        "caption": "Statutory Analytical Table",
+        "html": "<table class=\"w-full text-xs border border-slate-400 border-collapse my-2\"><tr class=\"bg-indigo-50 font-bold\"><th class=\"border p-2\">Item</th><th class=\"border p-2 text-right\">Details</th></tr><tr><td class=\"border p-2 font-semibold\">Statutory Basis</td><td class=\"border p-2 text-right\">FM_WACC_MARKET_WEIGHTS</td></tr></table>"
+      },
+      {
+        "type": "answer",
+        "title": "Answer-3(a)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Cost of Capital."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3"
+      ],
+      "tables": [
+        {
+          "id": "table_1"
+        }
+      ]
+    }
+  },
+  {
+    "paper": "paper-6",
+    "position": 6,
+    "original_id": "p6_q3b_ansoff",
+    "source_url": "https://www.castudypartner.com/questions/e42387198f",
+    "title": "Question-3(b)",
+    "topic": "Strategic Choices",
+    "sub_topic": "Ansoff's Product-Market Growth Matrix",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "6",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Strategic Choices (Ansoff's Product-Market Growth Matrix) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "table",
+        "caption": "Statutory Analytical Table",
+        "html": "<table class=\"w-full text-xs border border-slate-400 border-collapse my-2\"><tr class=\"bg-indigo-50 font-bold\"><th class=\"border p-2\">Item</th><th class=\"border p-2 text-right\">Details</th></tr><tr><td class=\"border p-2 font-semibold\">Statutory Basis</td><td class=\"border p-2 text-right\">SM_ANSOFF_MATRIX</td></tr></table>"
+      },
+      {
+        "type": "answer",
+        "title": "Answer-3(b)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Strategic Choices."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3",
+        "Part 4"
+      ],
+      "tables": [
+        {
+          "id": "table_1"
+        }
+      ]
+    }
+  }
+]

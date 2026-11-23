@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CA Inter Study Partner · Jan 2027 Pro Test & Question Engine</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+  <div id="root"></div>
+
+  <!-- Data Script -->
+  <script src="./data/embedded_data.js"></script>
+
+  <!-- React Application Logic -->
+  <script type="text/babel">
+    const { useState, useEffect, useMemo, useRef } = React;
+
+    // Use embedded CA Inter database
+    const DB = window.CA_INTER_DB || {};
+
+    function App() {
+      // Navigation states: 'subjects' | 'questions' | 'testSeries' | 'trendAnalysis' | 'notes'
+      const [currentView, setCurrentView] = useState('subjects');
+      const [selectedSubjectId, setSelectedSubjectId] = useState('paper-1');
+      const [activeTab, setActiveTab] = useState('Subjective'); // 'Subjective' | 'MCQs' | 'Important' | 'Quick Concepts'
+      const [navSection, setNavSection] = useState('Past Papers'); // 'Past Papers' | 'Test Series' | 'Articles'
+
+      // Filters
+      const [searchQuery, setSearchQuery] = useState('');
+      const [selectedSource, setSelectedSource] = useState('all');
+      const [selectedYear, setSelectedYear] = useState('all');
+      const [selectedTopic, setSelectedTopic] = useState('all');
+      const [filterRead, setFilterRead] = useState(false);
+      const [filterNotes, setFilterNotes] = useState(false);
+      const [filterImportant, setFilterImportant] = useState(false);
+
+      // User state persisted in localStorage
+      const [readIds, setReadIds] = useState(() => {
+        try { return JSON.parse(localStorage.getItem('ca_read_ids') || '[]'); } catch { return []; }
+      });
+      const [importantIds, setImportantIds] = useState(() => {
+        try { return JSON.parse(localStorage.getItem('ca_important_ids') || '[]'); } catch { return []; }
+      });
+      const [userNotes, setUserNotes] = useState(() => {
+        try { return JSON.parse(localStorage.getItem('ca_user_notes') || '{}'); } catch { return {}; }
+      });
+
+      // Modal state for viewing a question
+      const [activeQuestion, setActiveQuestion] = useState(null);
+      const [modalMode, setModalMode] = useState('Both'); // 'Both' | 'Question' | 'Answer'
+      const [showAnswer, setShowAnswer] = useState(false);
+      const [showNotesDrawer, setShowNotesDrawer] = useState(false);
+      const [currentNoteText, setCurrentNoteText] = useState('');
+      const [selectedMcqOption, setSelectedMcqOption] = useState(null);
+      const [caseStudyAnswers, setCaseStudyAnswers] = useState({});
+
+      // Test Series State
+      const [testActive, setTestActive] = useState(false);
+      const [testSubject, setTestSubject] = useState('paper-1');
+      const [testTimeLeft, setTestTimeLeft] = useState(1800); // 30 mins
+      const [testQuestions, setTestQuestions] = useState([]);
+      const [currentTestQIdx, setCurrentTestQIdx] = useState(0);
+      const [testAnswers, setTestAnswers] = useState({});
+      const [testReviewStatus, setTestReviewStatus] = useState({});
+      const [testResult, setTestResult] = useState(null);
+
+      // Save user marks to localStorage
+      useEffect(() => {
+        try { localStorage.setItem('ca_read_ids', JSON.stringify(readIds)); } catch {}
+      }, [readIds]);
+
+      useEffect(() => {
+        try { localStorage.setItem('ca_important_ids', JSON.stringify(importantIds)); } catch {}
+      }, [importantIds]);
+
+      useEffect(() => {
+        try { localStorage.setItem('ca_user_notes', JSON.stringify(userNotes)); } catch {}
+      }, [userNotes]);
+
+      // Re-trigger Lucide icons on view change
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      });
+
+      // Subject Data lookup
+      const currentSubjectMeta = useMemo(() => {
+        const allSubs = [...(DB.subjects?.group1 || []), ...(DB.subjects?.group2 || [])];
+        return allSubs.find(s => s.id === selectedSubjectId) || allSubs[0];
+      }, [selectedSubjectId]);
+
+      const currentQuestionsList = useMemo(() => {
+        return DB.questionsBySubject?.[selectedSubjectId]?.questions || [];
+      }, [selectedSubjectId]);
+
+      // Unique Topics & Sources & Years for filters
+      const filterOptions = useMemo(() => {
+        const topics = new Set();
+        const sources = new Set();
+        const years = new Set();
+
+        currentQuestionsList.forEach(q => {
+          if (q.topic) topics.add(q.topic);
+          if (q.source) sources.add(q.source);
+          if (q.year) years.add(q.year);
+        });
+
+        return {
+          topics: Array.from(topics),
+          sources: Array.from(sources),
+          years: Array.from(years)
+        };
+      }, [currentQuestionsList]);
+
+      // Filtered questions
+      const filteredQuestions = useMemo(() => {
+        return currentQuestionsList.filter(q => {
+          // Tab filter
+          if (activeTab === 'Subjective' && q.category !== 'Subjective') return false;
+          if (activeTab === 'MCQs' && q.category !== 'MCQs') return false;
+          if (activeTab === 'Important' && !importantIds.includes(q.id)) return false;
+
+          // Dropdown filters
+          if (selectedSource !== 'all' && q.source !== selectedSource) return false;
+          if (selectedYear !== 'all' && q.year !== selectedYear) return false;
+          if (selectedTopic !== 'all' && q.topic !== selectedTopic) return false;
+
+          // Pill filters
+          if (filterRead && !readIds.includes(q.id)) return false;
+          if (filterImportant && !importantIds.includes(q.id)) return false;
+          if (filterNotes && !userNotes[q.id]) return false;
+
+          // Search query
+          if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase();
+            const textMatch = (q.question || '').toLowerCase().includes(query) ||
+                              (q.topic || '').toLowerCase().includes(query) ||
+                              (q.subTopic || '').toLowerCase().includes(query) ||
+                              (q.source || '').toLowerCase().includes(query) ||
+                              (q.year || '').toLowerCase().includes(query);
+            if (!textMatch) return false;
+          }
+
+          return true;
+        });
+      }, [currentQuestionsList, activeTab, selectedSource, selectedYear, selectedTopic, filterRead, filterImportant, filterNotes, searchQuery, readIds, importantIds, userNotes]);
+
+      // Handle Subject Card Click
+      const handleOpenSubject = (subId) => {
+        setSelectedSubjectId(subId);
+        setCurrentView('questions');
+        setActiveTab('Subjective');
+        setSelectedTopic('all');
+        setSelectedSource('all');
+        setSelectedYear('all');
+        setSearchQuery('');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+      // Handle Question Click to open modal
+      const handleOpenQuestionModal = (q) => {
+        setActiveQuestion(q);
+        setShowAnswer(false);
+        setModalMode('Both');
+        setShowNotesDrawer(false);
+        setCurrentNoteText(userNotes[q.id] || '');
+        setSelectedMcqOption(null);
+        setCaseStudyAnswers({});
+      };
+
+      // Toggle Read Status
+      const toggleRead = (qId, e) => {
+        if (e) e.stopPropagation();
+        setReadIds(prev => prev.includes(qId) ? prev.filter(id => id !== qId) : [...prev, qId]);
+      };
+
+      // Toggle Important Status
+      const toggleImportant = (qId, e) => {
+        if (e) e.stopPropagation();
+        setImportantIds(prev => {
+          const next = prev.includes(qId) ? prev.filter(id => id !== qId) : [...prev, qId];
+          if (!prev.includes(qId)) {
+            confetti({ particleCount: 30, spread: 50, origin: { y: 0.8 } });
+          }
+          return next;
+        });
+      };
+
+      // Save Note
+      const handleSaveNote = () => {
+        if (!activeQuestion) return;
+        setUserNotes(prev => ({
+          ...prev,
+          [activeQuestion.id]: currentNoteText
+        }));
+        setShowNotesDrawer(false);
+      };
+
+      // Question Modal Navigation (Previous / Next)
+      const handleNavigateQuestion = (direction) => {
+        if (!activeQuestion) return;
+        const currentIdx = filteredQuestions.findIndex(q => q.id === activeQuestion.id);
+        if (currentIdx === -1) return;
+
+        const nextIdx = direction === 'next'
+          ? (currentIdx + 1) % filteredQuestions.length
+          : (currentIdx - 1 + filteredQuestions.length) % filteredQuestions.length;
+
+        handleOpenQuestionModal(filteredQuestions[nextIdx]);
+      };
+
+      // ── TEST SERIES TIMER & ENGINE ──
+      useEffect(() => {
+        if (!testActive) return;
+        const timer = setInterval(() => {
+          setTestTimeLeft(prev => {
+            if (prev <= 1) {
+              clearInterval(timer);
+              handleSubmitTest();
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+        return () => clearInterval(timer);
+      }, [testActive]);
+
+      const handleStartTest = (subId, minutes = 20) => {
+        const pool = DB.questionsBySubject?.[subId]?.questions || [];
+        const mcqs = pool.filter(q => q.category === 'MCQs');
+        const questionsForTest = mcqs.length >= 5 ? mcqs.slice(0, 10) : pool.slice(0, 10);
+
+        setTestSubject(subId);
+        setTestQuestions(questionsForTest);
+        setTestAnswers({});
+        setTestReviewStatus({});
+        setTestTimeLeft(minutes * 60);
+        setCurrentTestQIdx(0);
+        setTestResult(null);
+        setTestActive(true);
+        setCurrentView('testSeries');
+      };
+
+      const handleSubmitTest = () => {
+        setTestActive(false);
+        let score = 0;
+        let totalMarks = 0;
+        let attempted = 0;
+
+        testQuestions.forEach(q => {
+          if (q.type === 'Single MCQ') {
+            totalMarks += q.marks || 1;
+            const userAns = testAnswers[q.id];
+            if (userAns) {
+              attempted++;
+              if (userAns === q.correctOption) {
+                score += q.marks || 1;
+              }
+            }
+          } else if (q.type === 'Case Study' && q.subQuestions) {
+            q.subQuestions.forEach(sub => {
+              totalMarks += 2;
+              const subAns = testAnswers[`${q.id}_${sub.qNo}`];
+              if (subAns) {
+                attempted++;
+                if (subAns === sub.correctOption) {
+                  score += 2;
+                }
+              }
+            });
+          } else {
+            totalMarks += q.marks || 5;
+            if (testAnswers[q.id]) attempted++;
+          }
+        });
+
+        setTestResult({
+          score,
+          totalMarks,
+          attempted,
+          totalQuestions: testQuestions.length,
+          percentage: totalMarks > 0 ? ((score / totalMarks) * 100).toFixed(1) : 0
+        });
+
+        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+      };
+
+      // Format seconds to MM:SS
+      const formatTime = (secs) => {
+        const m = Math.floor(secs / 60);
+        const s = secs % 60;
+        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+          
+          {/* ── TOP HEADER / NAVBAR (Exact Match to castudypartner.com) ── */}
+          <header className="bg-gradient-to-r from-[#2c2779] via-[#352f94] to-[#1f1a5f] text-white sticky top-0 z-30 shadow-md">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-14 sm:h-16">
+                
+                {/* Left Brand & Badge */}
+                <div className="flex items-center gap-3">
+                  <div
+                    onClick={() => { setCurrentView('subjects'); setNavSection('Past Papers'); }}
+                    className="flex items-center gap-2 cursor-pointer group"
+                  >
+                    <div className="size-8 rounded-lg bg-white/10 flex items-center justify-center font-black text-amber-300 text-sm border border-white/20">
+                      CA
+                    </div>
+                    <span className="font-extrabold text-base sm:text-lg tracking-tight group-hover:text-amber-200 transition">
+                      castudypartner<span className="text-amber-400">.com</span>
+                    </span>
+                  </div>
+
+                  <span className="hidden md:inline-flex items-center text-[10px] font-mono font-bold bg-white/10 text-pink-200 px-2.5 py-1 rounded-full border border-white/15">
+                    Free Login: Unlimited (Jan 2027 Pro)
+                  </span>
+                </div>
+
+                {/* Center Navigation Pills */}
+                <div className="flex items-center bg-black/25 p-1 rounded-full border border-white/15 text-xs font-bold">
+                  <button
+                    onClick={() => { setNavSection('Past Papers'); setCurrentView('subjects'); }}
+                    className={`px-4 py-1.5 rounded-full transition cursor-pointer ${
+                      navSection === 'Past Papers'
+                        ? 'bg-white text-indigo-950 shadow-xs'
+                        : 'text-white/80 hover:text-white'
+                    }`}
+                  >
+                    Past Papers
+                  </button>
+                  <button
+                    onClick={() => { setNavSection('Test Series'); setCurrentView('testSeries'); }}
+                    className={`px-4 py-1.5 rounded-full transition cursor-pointer ${
+                      navSection === 'Test Series'
+                        ? 'bg-white text-indigo-950 shadow-xs'
+                        : 'text-white/80 hover:text-white'
+                    }`}
+                  >
+                    Test Series
+                  </button>
+                  <button
+                    onClick={() => { setNavSection('Articles'); setCurrentView('trendAnalysis'); }}
+                    className={`px-4 py-1.5 rounded-full transition cursor-pointer ${
+                      navSection === 'Articles'
+                        ? 'bg-white text-indigo-950 shadow-xs'
+                        : 'text-white/80 hover:text-white'
+                    }`}
+                  >
+                    PYP Trends
+                  </button>
+                </div>
+
+                {/* Right Profile & Actions */}
+                <div className="flex items-center gap-2.5 sm:gap-3 text-xs font-semibold">
+                  <button
+                    onClick={() => alert("CA Study Partner Helpdesk: WhatsApp +91 9530339508 or email blushwish.in@gmail.com for instant CA Inter queries.")}
+                    className="hidden sm:inline-block px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition cursor-pointer border border-white/20 text-white"
+                  >
+                    Help
+                  </button>
+
+                  <div className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 px-3 py-1 rounded-full cursor-pointer transition border border-white/20">
+                    <span className="size-5 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center font-bold text-[10px]">
+                      K
+                    </span>
+                    <span className="font-bold">kuku</span>
+                    <span className="text-[10px] text-white/70">▾</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+
+          </header>
+
+          {/* ═════════════════════════════════════════════════════════════════ */}
+          {/* VIEW 1: SUBJECT SELECTION (CA INTERMEDIATE GROUP 1 & GROUP 2)    */}
+          {/* ═════════════════════════════════════════════════════════════════ */}
+          {currentView === 'subjects' && (
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+              
+              <div className="text-center mb-8">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1f1a5f] uppercase tracking-wider font-mono">
+                  CA INTERMEDIATE
+                </h1>
+                <p className="text-slate-500 text-xs sm:text-sm mt-1 font-medium">
+                  Select a paper below to practice topic-wise Past Year Questions (PYQs), Revision Test Papers (RTPs), and Mock Tests (MTPs).
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+                
+                {/* ── GROUP-1 COLUMN ── */}
+                <div className="space-y-4">
+                  <div className="text-center font-extrabold text-sm sm:text-base uppercase tracking-wider text-slate-800 font-mono pb-2 border-b-2 border-indigo-500">
+                    GROUP-1
+                  </div>
+
+                  {(DB.subjects?.group1 || []).map(sub => (
+                    <div
+                      key={sub.id}
+                      onClick={() => handleOpenSubject(sub.id)}
+                      className="group bg-[#1a225e] hover:bg-[#232d78] text-white rounded-2xl p-4 sm:p-5 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center justify-between gap-4 border border-indigo-400/30 hover:scale-[1.01]"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-bold text-sm sm:text-base leading-tight group-hover:text-amber-300 transition">
+                          {sub.code}: {sub.name}
+                        </h3>
+                        <p className="text-xs text-indigo-200/80 mt-1">
+                          {sub.attempts} · <span className="text-emerald-300 font-bold">{sub.pyq_count}</span>
+                        </p>
+                      </div>
+
+                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#1cd4a8] text-slate-950 shadow-xs flex-shrink-0 group-hover:bg-emerald-300 transition">
+                        Active
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* ── GROUP-2 COLUMN ── */}
+                <div className="space-y-4">
+                  <div className="text-center font-extrabold text-sm sm:text-base uppercase tracking-wider text-slate-800 font-mono pb-2 border-b-2 border-purple-500">
+                    GROUP-2
+                  </div>
+
+                  {(DB.subjects?.group2 || []).map(sub => (
+                    <div
+                      key={sub.id}
+                      onClick={() => handleOpenSubject(sub.id)}
+                      className="group bg-[#1a225e] hover:bg-[#232d78] text-white rounded-2xl p-4 sm:p-5 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center justify-between gap-4 border border-indigo-400/30 hover:scale-[1.01]"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-bold text-sm sm:text-base leading-tight group-hover:text-amber-300 transition">
+                          {sub.code}: {sub.name}
+                        </h3>
+                        <p className="text-xs text-indigo-200/80 mt-1">
+                          {sub.attempts} · <span className="text-emerald-300 font-bold">{sub.pyq_count}</span>
+                        </p>
+                      </div>
+
+                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#1cd4a8] text-slate-950 shadow-xs flex-shrink-0 group-hover:bg-emerald-300 transition">
+                        Active
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+
+              {/* Bottom Quick Test Launch Banner */}
+              <div className="mt-12 p-6 bg-gradient-to-r from-indigo-900 to-purple-900 text-white rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">⚡</span>
+                    <h3 className="text-base sm:text-lg font-bold">Jan 2027 Mock Test Simulator</h3>
+                  </div>
+                  <p className="text-xs text-indigo-200 mt-1">
+                    Simulate real 30-minute speed drill tests with instant auto-grading and ICAI suggested solutions.
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleStartTest(selectedSubjectId || 'paper-1', 20)}
+                  className="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs rounded-full shadow-md transition cursor-pointer flex-shrink-0"
+                >
+                  Start Practice Test Now →
+                </button>
+              </div>
+
+            </main>
+          )}
+
+          {/* ═════════════════════════════════════════════════════════════════ */}
+          {/* VIEW 2: QUESTIONS TABLE (Subjective, MCQs, Filters, Status)       */}
+          {/* ═════════════════════════════════════════════════════════════════ */}
+          {currentView === 'questions' && (
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+              
+              {/* Subject Title & Home Button */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setCurrentView('subjects')}
+                    className="size-9 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm transition cursor-pointer border border-indigo-200"
+                    title="Back to All Subjects"
+                  >
+                    🏠
+                  </button>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl font-extrabold text-[#1f1a5f]">
+                      {currentSubjectMeta?.name}
+                    </h2>
+                    <p className="text-xs text-slate-500 font-medium">
+                      {currentSubjectMeta?.code} · {currentSubjectMeta?.attempts} · New Scheme
+                    </p>
+                  </div>
+                </div>
+
+                {/* Subject Switcher Quick Select */}
+                <div className="flex items-center gap-2">
+                  <select
+                    value={selectedSubjectId}
+                    onChange={(e) => handleOpenSubject(e.target.value)}
+                    className="px-3 py-1.5 bg-white border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:border-indigo-600 shadow-2xs"
+                  >
+                    {(DB.subjects?.group1 || []).map(s => <option key={s.id} value={s.id}>G1: {s.name}</option>)}
+                    {(DB.subjects?.group2 || []).map(s => <option key={s.id} value={s.id}>G2: {s.name}</option>)}
+                  </select>
+                  <button
+                    onClick={() => handleStartTest(selectedSubjectId, 25)}
+                    className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer flex items-center gap-1"
+                  >
+                    <span>⚡ Test Mode</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* View Mode Pills (Subjective, MCQs, Important, Quick Concepts) */}
+              <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
+                <div className="flex items-center gap-2 bg-slate-200/80 p-1 rounded-2xl">
+                  <button
+                    onClick={() => setActiveTab('Subjective')}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                      activeTab === 'Subjective'
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'text-slate-700 hover:text-slate-950'
+                    }`}
+                  >
+                    Subjective ({currentQuestionsList.filter(q => q.category === 'Subjective').length})
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('MCQs')}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                      activeTab === 'MCQs'
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'text-slate-700 hover:text-slate-950'
+                    }`}
+                  >
+                    MCQs ({currentQuestionsList.filter(q => q.category === 'MCQs').length})
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('Important')}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+                      activeTab === 'Important'
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'text-slate-700 hover:text-slate-950'
+                    }`}
+                  >
+                    <span>⭐ Important</span>
+                    <span className="text-[10px] bg-amber-400 text-slate-900 px-1.5 rounded-full font-black">
+                      {importantIds.length}
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => alert("Quick Concepts Summary for " + currentSubjectMeta?.name + " is loaded in the reference guide!")}
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-950 transition cursor-pointer"
+                  >
+                    Quick Concepts
+                  </button>
+                </div>
+
+                {/* Total Records Counter */}
+                <div className="flex items-center gap-2 text-xs font-mono font-bold bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-2xs">
+                  <span className="text-slate-500">Total Records:</span>
+                  <span className="text-indigo-600 text-sm font-black">{filteredQuestions.length}</span>
+                </div>
+              </div>
+
+              {/* Secondary Filter & Search Strip */}
+              <div className="mt-4 p-3 bg-white rounded-2xl border border-slate-200 shadow-2xs flex flex-wrap items-center justify-between gap-3 text-xs">
+                
+                {/* Search Bar */}
+                <div className="relative flex-1 min-w-[220px]">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search question keywords, standards (AS 10, Sec 73)..."
+                    className="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-indigo-600 text-xs"
+                  />
+                  <span className="absolute left-2.5 top-2.5 text-slate-400">🔍</span>
+                </div>
+
+                {/* Source Filter */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-slate-400 text-[11px] font-mono">Source:</span>
+                  <select
+                    value={selectedSource}
+                    onChange={(e) => setSelectedSource(e.target.value)}
+                    className="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-xs"
+                  >
+                    <option value="all">All Sources</option>
+                    {filterOptions.sources.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+
+                {/* Year Filter */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-slate-400 text-[11px] font-mono">Year:</span>
+                  <select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                    className="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-xs"
+                  >
+                    <option value="all">All Years</option>
+                    {filterOptions.years.map(y => <option key={y} value={y}>{y}</option>)}
+                  </select>
+                </div>
+
+                {/* Topic Filter */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-slate-400 text-[11px] font-mono">Topic:</span>
+                  <select
+                    value={selectedTopic}
+                    onChange={(e) => setSelectedTopic(e.target.value)}
+                    className="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-xs max-w-[160px] truncate"
+                  >
+                    <option value="all">All Topics</option>
+                    {filterOptions.topics.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+
+                {/* Quick Toggle Filters (Read, Notes, Important) */}
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => setFilterRead(!filterRead)}
+                    className={`px-2.5 py-1 rounded-lg border font-bold transition cursor-pointer flex items-center gap-1 ${
+                      filterRead ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-600 border-slate-200'
+                    }`}
+                  >
+                    <span>👁️ Read</span>
+                  </button>
+                  <button
+                    onClick={() => setFilterNotes(!filterNotes)}
+                    className={`px-2.5 py-1 rounded-lg border font-bold transition cursor-pointer flex items-center gap-1 ${
+                      filterNotes ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-slate-50 text-slate-600 border-slate-200'
+                    }`}
+                  >
+                    <span>📝 Notes</span>
+                  </button>
+                  <button
+                    onClick={() => setFilterImportant(!filterImportant)}
+                    className={`px-2.5 py-1 rounded-lg border font-bold transition cursor-pointer flex items-center gap-1 ${
+                      filterImportant ? 'bg-amber-500 text-white border-amber-500' : 'bg-slate-50 text-slate-600 border-slate-200'
+                    }`}
+                  >
+                    <span>⭐ Important</span>
+                  </button>
+                </div>
+
+              </div>
+
+              {/* ── MAIN DATA TABLE (Matching Exact Website Format) ── */}
+              <div className="mt-4 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead className="bg-[#4338ca] text-white font-mono font-bold uppercase text-[11px] tracking-wider">
+                      <tr>
+                        <th className="py-3 px-3 text-center w-12">S.N.</th>
+                        <th className="py-3 px-4">Topic</th>
+                        <th className="py-3 px-4 min-w-[280px]">Sub-Topic</th>
+                        {activeTab === 'MCQs' && <th className="py-3 px-3 text-center">Type</th>}
+                        <th className="py-3 px-3 text-center">Source</th>
+                        <th className="py-3 px-3 text-center">Year</th>
+                        <th className="py-3 px-3 text-center">Q No</th>
+                        <th className="py-3 px-3 text-center">Marks</th>
+                        <th className="py-3 px-3 text-center">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {filteredQuestions.length === 0 ? (
+                        <tr>
+                          <td colSpan={activeTab === 'MCQs' ? 9 : 8} className="py-12 text-center text-slate-400">
+                            No questions match your current filters. Try resetting filters or search query.
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredQuestions.map((q, idx) => {
+                          const isRead = readIds.includes(q.id);
+                          const isImp = importantIds.includes(q.id);
+                          const hasNote = Boolean(userNotes[q.id]);
+
+                          return (
+                            <tr
+                              key={q.id}
+                              onClick={() => handleOpenQuestionModal(q)}
+                              className={`hover:bg-indigo-50/60 transition cursor-pointer ${
+                                idx % 2 === 1 ? 'bg-slate-50/50' : 'bg-white'
+                              }`}
+                            >
+                              <td className="py-3.5 px-3 text-center font-mono font-bold text-slate-400">
+                                {q.sn || idx + 1}
+                              </td>
+                              <td className="py-3.5 px-4 font-bold text-slate-900">
+                                <div className="flex items-center gap-1.5">
+                                  <span>{q.topic}</span>
+                                  {isImp && <span className="text-amber-500 text-xs">⭐</span>}
+                                  {hasNote && <span className="text-emerald-500 text-xs">📝</span>}
+                                </div>
+                              </td>
+                              <td className="py-3.5 px-4 text-slate-700 font-medium whitespace-normal leading-relaxed">
+                                {q.subTopic || '-'}
+                              </td>
+                              {activeTab === 'MCQs' && (
+                                <td className="py-3.5 px-3 text-center">
+                                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                    q.type === 'Case Study'
+                                      ? 'bg-amber-100 text-amber-800 border border-amber-300'
+                                      : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                                  }`}>
+                                    {q.type || 'Single MCQ'}
+                                  </span>
+                                </td>
+                              )}
+                              <td className="py-3.5 px-3 text-center">
+                                <span className="px-2 py-0.5 rounded-md font-mono font-bold text-[10px] bg-slate-100 text-indigo-700 border border-slate-200">
+                                  {q.source}
+                                </span>
+                              </td>
+                              <td className="py-3.5 px-3 text-center font-mono font-semibold text-slate-600">
+                                {q.year}
+                              </td>
+                              <td className="py-3.5 px-3 text-center font-mono font-bold text-slate-800">
+                                {q.qNo}
+                              </td>
+                              <td className="py-3.5 px-3 text-center font-mono font-bold text-indigo-700">
+                                {q.marks || '-'}
+                              </td>
+                              <td className="py-3.5 px-3 text-center" onClick={(e) => e.stopPropagation()}>
+                                <button
+                                  type="button"
+                                  onClick={(e) => toggleRead(q.id, e)}
+                                  className={`size-7 rounded-lg inline-flex items-center justify-center transition cursor-pointer ${
+                                    isRead
+                                      ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                                      : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+                                  }`}
+                                  title={isRead ? 'Marked as Read' : 'Click to Mark as Read'}
+                                >
+                                  👁️
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Table Footer - All Records Displayed */}
+                <div className="p-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600 font-mono">
+                  <div className="flex items-center gap-2">
+                    <span className="size-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+                    <span>Showing all <strong className="text-indigo-700 font-bold">{filteredQuestions.length}</strong> records</span>
+                  </div>
+                  <span className="text-[11px] text-slate-400">Total: {filteredQuestions.length} items (Continuous list)</span>
+                </div>
+              </div>
+
+            </main>
+          )}
+
+          {/* ═════════════════════════════════════════════════════════════════ */}
+          {/* VIEW 3: TEST SERIES ENGINE (30-Minute Speed Mock Drill)            */}
+          {/* ═════════════════════════════════════════════════════════════════ */}
+          {currentView === 'testSeries' && (
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+              
+              {!testActive && !testResult && (
+                <div className="max-w-3xl mx-auto bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md text-center">
+                  <div className="size-16 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-3xl mx-auto mb-4">
+                    📝
+                  </div>
+                  <h2 className="text-2xl font-black text-[#1f1a5f]">
+                    CA Inter Mock Test Series &amp; Practice Drills
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+                    Practice with authentic ICAI questions under timed exam conditions. Choose your paper and launch the test engine.
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 text-left">
+                    <div>
+                      <label className="block text-xs font-mono font-bold uppercase text-slate-500 mb-1">Select Paper</label>
+                      <select
+                        value={testSubject}
+                        onChange={(e) => setTestSubject(e.target.value)}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold"
+                      >
+                        {(DB.subjects?.group1 || []).map(s => <option key={s.id} value={s.id}>G1: {s.name}</option>)}
+                        {(DB.subjects?.group2 || []).map(s => <option key={s.id} value={s.id}>G2: {s.name}</option>)}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-mono font-bold uppercase text-slate-500 mb-1">Test Format</label>
+                      <div className="p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                        <span className="font-bold text-indigo-700">MCQ &amp; Case Scenario Drill</span>
+                        <p className="text-[10px] text-slate-500">20 Minutes · 10 Questions · Auto-graded</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => handleStartTest(testSubject, 20)}
+                    className="mt-6 px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-extrabold text-sm rounded-full shadow-lg transition cursor-pointer"
+                  >
+                    Start Timed Test Now →
+                  </button>
+                </div>
+              )}
+
+              {/* Live Test In Progress */}
+              {testActive && testQuestions.length > 0 && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  
+                  {/* Left Column: Question Area */}
+                  <div className="lg:col-span-8 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between min-h-[500px]">
+                    <div>
+                      
+                      {/* Top Header of Question */}
+                      <div className="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
+                        <div className="flex items-center gap-2">
+                          <span className="px-3 py-1 bg-indigo-600 text-white font-mono font-bold text-xs rounded-lg">
+                            Question {currentTestQIdx + 1} of {testQuestions.length}
+                          </span>
+                          <span className="text-xs text-slate-500 font-mono">
+                            {testQuestions[currentTestQIdx]?.topic} · {testQuestions[currentTestQIdx]?.source}
+                          </span>
+                        </div>
+
+                        {/* Countdown Timer */}
+                        <div className={`flex items-center gap-1.5 font-mono font-bold text-sm px-3 py-1 rounded-full border ${
+                          testTimeLeft < 300 ? 'bg-rose-100 text-rose-700 border-rose-300 animate-pulse' : 'bg-slate-100 text-slate-700 border-slate-300'
+                        }`}>
+                          <span>⏱️</span>
+                          <span>{formatTime(testTimeLeft)}</span>
+                        </div>
+                      </div>
+
+                      {/* Question Content */}
+                      {testQuestions[currentTestQIdx]?.caseScenario && (
+                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed mb-4">
+                          <div className="font-bold text-indigo-700 uppercase mb-1">
+                            {testQuestions[currentTestQIdx]?.caseStudyTitle || 'Case Scenario'}:
+                          </div>
+                          <div className="whitespace-pre-line">{testQuestions[currentTestQIdx]?.caseScenario}</div>
+                        </div>
+                      )}
+
+                      <div className="text-sm font-semibold text-slate-900 leading-relaxed whitespace-pre-line">
+                        {testQuestions[currentTestQIdx]?.question}
+                      </div>
+
+                      {/* Options */}
+                      {testQuestions[currentTestQIdx]?.options && (
+                        <div className="mt-5 space-y-2.5">
+                          {testQuestions[currentTestQIdx].options.map((opt, oIdx) => {
+                            const optLetter = String.fromCharCode(65 + oIdx);
+                            const qId = testQuestions[currentTestQIdx].id;
+                            const isSelected = testAnswers[qId] === optLetter;
+
+                            return (
+                              <label
+                                key={oIdx}
+                                className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition ${
+                                  isSelected
+                                    ? 'bg-indigo-50 border-indigo-600 text-indigo-950 font-bold'
+                                    : 'bg-white border-slate-200 hover:border-slate-300 text-slate-800'
+                                }`}
+                              >
+                                <input
+                                  type="radio"
+                                  name={`test_opt_${qId}`}
+                                  checked={isSelected}
+                                  onChange={() => setTestAnswers(prev => ({ ...prev, [qId]: optLetter }))}
+                                  className="mt-0.5 accent-indigo-600"
+                                />
+                                <div className="text-xs">
+                                  <span className="font-bold mr-1.5">{optLetter}.</span>
+                                  <span>{opt}</span>
+                                </div>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* For Case Study Sub-questions */}
+                      {testQuestions[currentTestQIdx]?.subQuestions && (
+                        <div className="mt-5 space-y-4">
+                          {testQuestions[currentTestQIdx].subQuestions.map(sub => {
+                            const subKey = `${testQuestions[currentTestQIdx].id}_${sub.qNo}`;
+                            const isAnswered = testAnswers[subKey];
+
+                            return (
+                              <div key={sub.qNo} className="p-4 bg-indigo-50/40 rounded-xl border border-indigo-100">
+                                <h5 className="font-bold text-xs text-slate-900 mb-2">
+                                  Sub-Question {sub.qNo}: {sub.question}
+                                </h5>
+                                <div className="space-y-1.5">
+                                  {sub.options.map((sOpt, sIdx) => {
+                                    const sLetter = String.fromCharCode(65 + sIdx);
+                                    const sSelected = testAnswers[subKey] === sLetter;
+
+                                    return (
+                                      <label
+                                        key={sIdx}
+                                        className={`flex items-center gap-2 p-2 rounded-lg border text-xs cursor-pointer ${
+                                          sSelected ? 'bg-indigo-600 text-white font-bold' : 'bg-white border-slate-200 hover:bg-slate-50'
+                                        }`}
+                                      >
+                                        <input
+                                          type="radio"
+                                          name={`test_sub_${subKey}`}
+                                          checked={sSelected}
+                                          onChange={() => setTestAnswers(prev => ({ ...prev, [subKey]: sLetter }))}
+                                          className="accent-indigo-600"
+                                        />
+                                        <span><b>{sLetter}.</b> {sOpt}</span>
+                                      </label>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                    </div>
+
+                    {/* Bottom Test Navigation Actions */}
+                    <div className="pt-6 border-t border-slate-200 flex items-center justify-between gap-3 text-xs">
+                      <button
+                        onClick={() => {
+                          const qId = testQuestions[currentTestQIdx]?.id;
+                          setTestReviewStatus(prev => ({ ...prev, [qId]: !prev[qId] }));
+                        }}
+                        className={`px-4 py-2 rounded-xl border font-bold transition cursor-pointer ${
+                          testReviewStatus[testQuestions[currentTestQIdx]?.id]
+                            ? 'bg-purple-600 text-white border-purple-600'
+                            : 'bg-slate-100 text-slate-700 border-slate-300'
+                        }`}
+                      >
+                        {testReviewStatus[testQuestions[currentTestQIdx]?.id] ? '✓ Marked for Review' : 'Mark for Review'}
+                      </button>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          disabled={currentTestQIdx === 0}
+                          onClick={() => setCurrentTestQIdx(prev => prev - 1)}
+                          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 rounded-xl font-bold transition cursor-pointer"
+                        >
+                          ← Previous
+                        </button>
+                        {currentTestQIdx < testQuestions.length - 1 ? (
+                          <button
+                            onClick={() => setCurrentTestQIdx(prev => prev + 1)}
+                            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition cursor-pointer"
+                          >
+                            Save &amp; Next →
+                          </button>
+                        ) : (
+                          <button
+                            onClick={handleSubmitTest}
+                            className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-extrabold transition cursor-pointer shadow-md"
+                          >
+                            Submit Test
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Right Column: Question Palette */}
+                  <div className="lg:col-span-4 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+                    <h3 className="font-bold text-xs uppercase tracking-wider text-slate-500 font-mono pb-2 border-b border-slate-200">
+                      Question Palette
+                    </h3>
+
+                    <div className="grid grid-cols-5 gap-2">
+                      {testQuestions.map((q, idx) => {
+                        const isCurrent = idx === currentTestQIdx;
+                        const isAns = testAnswers[q.id] || Object.keys(testAnswers).some(k => k.startsWith(q.id));
+                        const isRev = testReviewStatus[q.id];
+
+                        let bg = 'bg-slate-100 text-slate-600 border-slate-200';
+                        if (isCurrent) bg = 'ring-2 ring-indigo-600 bg-indigo-100 text-indigo-900 font-bold';
+                        else if (isRev) bg = 'bg-purple-600 text-white font-bold';
+                        else if (isAns) bg = 'bg-emerald-600 text-white font-bold';
+
+                        return (
+                          <button
+                            key={q.id}
+                            onClick={() => setCurrentTestQIdx(idx)}
+                            className={`size-10 rounded-xl border text-xs font-mono flex items-center justify-center transition cursor-pointer ${bg}`}
+                          >
+                            {idx + 1}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Legend */}
+                    <div className="pt-4 border-t border-slate-200 space-y-2 text-[11px] text-slate-600">
+                      <div className="flex items-center gap-2">
+                        <span className="size-3.5 rounded-md bg-emerald-600 inline-block"></span>
+                        <span>Answered</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="size-3.5 rounded-md bg-purple-600 inline-block"></span>
+                        <span>Marked for Review</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="size-3.5 rounded-md bg-slate-200 inline-block"></span>
+                        <span>Not Answered</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={handleSubmitTest}
+                      className="w-full mt-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition cursor-pointer shadow-sm"
+                    >
+                      Finish &amp; Submit Test
+                    </button>
+                  </div>
+
+                </div>
+              )}
+
+              {/* Test Result Scorecard */}
+              {testResult && (
+                <div className="max-w-2xl mx-auto bg-white rounded-3xl p-8 border border-slate-200 shadow-lg text-center animate-in fade-in">
+                  <div className="size-20 rounded-3xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-4xl mx-auto mb-4">
+                    🏆
+                  </div>
+                  <h2 className="text-2xl font-black text-slate-900">
+                    Test Completed!
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Your performance summary for CA Intermediate speed drill
+                  </p>
+
+                  <div className="grid grid-cols-3 gap-4 my-6">
+                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                      <div className="text-2xl font-black text-indigo-600">{testResult.score} / {testResult.totalMarks}</div>
+                      <div className="text-[11px] font-mono text-slate-500 uppercase mt-1">Score Achieved</div>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                      <div className="text-2xl font-black text-emerald-600">{testResult.percentage}%</div>
+                      <div className="text-[11px] font-mono text-slate-500 uppercase mt-1">Accuracy</div>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                      <div className="text-2xl font-black text-purple-600">{testResult.attempted} / {testResult.totalQuestions}</div>
+                      <div className="text-[11px] font-mono text-slate-500 uppercase mt-1">Questions Attempted</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-3">
+                    <button
+                      onClick={() => handleStartTest(testSubject, 20)}
+                      className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-full transition cursor-pointer"
+                    >
+                      Retake Test
+                    </button>
+                    <button
+                      onClick={() => { setTestResult(null); setCurrentView('questions'); }}
+                      className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-full transition cursor-pointer"
+                    >
+                      Review All Question Answers →
+                    </button>
+                  </div>
+                </div>
+              )}
+
+            </main>
+          )}
+
+          {/* ═════════════════════════════════════════════════════════════════ */}
+          {/* VIEW 4: PYP TREND ANALYSIS DASHBOARD                              */}
+          {/* ═════════════════════════════════════════════════════════════════ */}
+          {currentView === 'trendAnalysis' && (
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-200 mb-6">
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-black text-[#1f1a5f]">
+                    CA Inter PYP Trend Analysis &amp; Weightage Matrix
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Frequency analysis across Jan 2027 MTP, Sep 2026, May 2026, Jan 2026, and Sep 2025.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setCurrentView('subjects')}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition cursor-pointer"
+                >
+                  ← Back to Subjects
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* Paper 1 Accounting Standards Weightage */}
+                <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                  <h3 className="font-extrabold text-sm uppercase text-indigo-700 font-mono mb-3">
+                    Paper 1: Advanced Accounting - AS Frequency
+                  </h3>
+                  <div className="space-y-3 text-xs">
+                    {[
+                      { name: 'AS 21 (Consolidation)', weight: '14 - 20 Marks', freq: 'Every Attempt (100%)', bar: 'w-full bg-indigo-600' },
+                      { name: 'Amalgamation & Internal Reconstruction', weight: '14 Marks', freq: '90% Attempts', bar: 'w-11/12 bg-indigo-500' },
+                      { name: 'AS 10 (Property, Plant & Equip)', weight: '5 - 10 Marks', freq: '85% Attempts', bar: 'w-4/5 bg-indigo-500' },
+                      { name: 'AS 13 & AS 19 (Investments & Leases)', weight: '7 - 10 Marks', freq: '80% Attempts', bar: 'w-3/4 bg-indigo-400' },
+                      { name: 'Branch Accounts (Invoice Price)', weight: '6 - 10 Marks', freq: '75% Attempts', bar: 'w-2/3 bg-indigo-400' },
+                      { name: 'Buyback of Securities (Sec 68)', weight: '4 - 8 Marks', freq: '70% Attempts', bar: 'w-3/5 bg-indigo-300' }
+                    ].map((item, i) => (
+                      <div key={i} className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <div className="flex justify-between font-bold text-slate-800">
+                          <span>{item.name}</span>
+                          <span className="text-indigo-600">{item.weight}</span>
+                        </div>
+                        <div className="w-full bg-slate-200 h-2 rounded-full mt-2 overflow-hidden">
+                          <div className={`h-full rounded-full ${item.bar}`}></div>
+                        </div>
+                        <div className="text-[10px] text-slate-400 mt-1 font-mono">{item.freq}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Paper 2 Corporate Law Frequency */}
+                <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                  <h3 className="font-extrabold text-sm uppercase text-purple-700 font-mono mb-3">
+                    Paper 2: Corporate &amp; Other Laws - High Priority Topics
+                  </h3>
+                  <div className="space-y-3 text-xs">
+                    {[
+                      { name: 'Accounts of Companies (Sec 128-138 & CSR)', weight: '10 - 14 Marks', freq: 'Every Attempt (100%)', bar: 'w-full bg-purple-600' },
+                      { name: 'Audit & Auditors (Sec 139-148)', weight: '8 - 12 Marks', freq: '100% Attempts', bar: 'w-11/12 bg-purple-600' },
+                      { name: 'Acceptance of Deposits (Sec 73-76)', weight: '6 - 8 Marks', freq: '90% Attempts', bar: 'w-4/5 bg-purple-500' },
+                      { name: 'Prospectus & Private Placement (Sec 42)', weight: '5 - 8 Marks', freq: '85% Attempts', bar: 'w-3/4 bg-purple-400' },
+                      { name: 'General Clauses Act, 1897', weight: '6 - 10 Marks', freq: 'Mandatory in Part II', bar: 'w-4/5 bg-purple-500' },
+                      { name: 'Interpretation of Statutes', weight: '6 - 8 Marks', freq: 'Mandatory in Part II', bar: 'w-2/3 bg-purple-400' }
+                    ].map((item, i) => (
+                      <div key={i} className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <div className="flex justify-between font-bold text-slate-800">
+                          <span>{item.name}</span>
+                          <span className="text-purple-600">{item.weight}</span>
+                        </div>
+                        <div className="w-full bg-slate-200 h-2 rounded-full mt-2 overflow-hidden">
+                          <div className={`h-full rounded-full ${item.bar}`}></div>
+                        </div>
+                        <div className="text-[10px] text-slate-400 mt-1 font-mono">{item.freq}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            </main>
+          )}
+
+          {/* ═════════════════════════════════════════════════════════════════ */}
+          {/* INTERACTIVE QUESTION MODAL (Exact Replicate from Video Frames)    */}
+          {/* ═════════════════════════════════════════════════════════════════ */}
+          {activeQuestion && (
+            <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+              <div
+                className="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-4xl w-full my-auto overflow-hidden flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-200"
+                onClick={(e) => e.stopPropagation()}
+              >
+                
+                {/* Modal Top Bar */}
+                <div className="p-3.5 sm:p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-3">
+                  
+                  {/* Copy Button */}
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${activeQuestion.question}\n\nAnswer:\n${activeQuestion.answer || activeQuestion.reason || ''}`);
+                      alert("Question and solution copied to clipboard!");
+                    }}
+                    className="size-8 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xs font-bold transition hover:bg-purple-700 cursor-pointer shadow-2xs"
+                    title="Copy Question"
+                  >
+                    📋
+                  </button>
+
+                  {/* Mode Selector (Both / Question / Answer) */}
+                  <div className="flex items-center bg-slate-200/80 p-1 rounded-full text-xs font-bold">
+                    <button
+                      onClick={() => setModalMode('Both')}
+                      className={`px-3 py-1 rounded-full transition cursor-pointer ${
+                        modalMode === 'Both' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-700 hover:text-slate-900'
+                      }`}
+                    >
+                      Both
+                    </button>
+                    <button
+                      onClick={() => setModalMode('Question')}
+                      className={`px-3 py-1 rounded-full transition cursor-pointer ${
+                        modalMode === 'Question' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-700 hover:text-slate-900'
+                      }`}
+                    >
+                      Question
+                    </button>
+                    <button
+                      onClick={() => { setModalMode('Answer'); setShowAnswer(true); }}
+                      className={`px-3 py-1 rounded-full transition cursor-pointer ${
+                        modalMode === 'Answer' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-700 hover:text-slate-900'
+                      }`}
+                    >
+                      Answer
+                    </button>
+                  </div>
+
+                  {/* Close X Button */}
+                  <button
+                    onClick={() => setActiveQuestion(null)}
+                    className="size-8 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-sm hover:bg-purple-700 transition cursor-pointer"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Metadata Strip */}
+                <div className="px-5 py-2.5 bg-indigo-50/70 border-b border-indigo-100 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-bold text-indigo-900 text-sm">
+                      Question-{activeQuestion.qNo}
+                    </span>
+                    <span className="text-slate-400">·</span>
+                    <span className="text-slate-600 font-medium">{activeQuestion.topic}</span>
+                    <span className="text-slate-400">·</span>
+                    <span className="font-mono font-bold bg-white px-2 py-0.5 rounded text-indigo-700 border border-indigo-200">
+                      {activeQuestion.source} ({activeQuestion.year})
+                    </span>
+                  </div>
+
+                  {/* Badges: Read & Important */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={(e) => toggleRead(activeQuestion.id, e)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer ${
+                        readIds.includes(activeQuestion.id)
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-white text-slate-700 border border-slate-300'
+                      }`}
+                    >
+                      <span>✓ Read</span>
+                    </button>
+
+                    <button
+                      onClick={(e) => toggleImportant(activeQuestion.id, e)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer ${
+                        importantIds.includes(activeQuestion.id)
+                          ? 'bg-amber-400 text-slate-900'
+                          : 'bg-white text-slate-700 border border-slate-300'
+                      }`}
+                    >
+                      <span>⭐ Important</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Modal Scrollable Body */}
+                <div className="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1">
+                  
+                  {/* Case Scenario Box (if present) */}
+                  {activeQuestion.caseScenario && modalMode !== 'Answer' && (
+                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs sm:text-sm text-slate-800 leading-relaxed">
+                      <div className="font-bold text-indigo-700 font-mono uppercase mb-2">
+                        {activeQuestion.caseStudyTitle || 'Case Study Scenario'}:
+                      </div>
+                      <div className="whitespace-pre-line">{activeQuestion.caseScenario}</div>
+                    </div>
+                  )}
+
+                  {/* Question Statement */}
+                  {modalMode !== 'Answer' && (
+                    <div>
+                      <div
+                        className="text-xs sm:text-sm text-slate-900 leading-relaxed whitespace-pre-line"
+                        dangerouslySetInnerHTML={{ __html: activeQuestion.question }}
+                      />
+
+                      {/* Options for Single MCQ */}
+                      {Boolean(activeQuestion.options && activeQuestion.options.length > 0) && (
+                        <div className="mt-4 space-y-2">
+                          <div className="text-xs font-bold text-slate-700 mb-2">Options:</div>
+                          {activeQuestion.options.map((opt, idx) => {
+                            const letter = String.fromCharCode(65 + idx);
+                            const isChosen = selectedMcqOption === letter;
+                            const isCorrect = activeQuestion.correctOption === letter;
+
+                            let optStyle = 'bg-white border-slate-200 hover:bg-slate-50 text-slate-800';
+                            if (showAnswer) {
+                              if (isCorrect) optStyle = 'bg-emerald-50 border-emerald-500 text-emerald-950 font-bold';
+                              else if (isChosen && !isCorrect) optStyle = 'bg-rose-50 border-rose-400 text-rose-950';
+                            } else if (isChosen) {
+                              optStyle = 'bg-indigo-50 border-indigo-600 text-indigo-950 font-bold';
+                            }
+
+                            return (
+                              <div
+                                key={idx}
+                                onClick={() => setSelectedMcqOption(letter)}
+                                className={`p-3 rounded-xl border text-xs flex items-start gap-2.5 cursor-pointer transition ${optStyle}`}
+                              >
+                                <span className="font-mono font-bold">{letter}.</span>
+                                <span className="flex-1">{opt}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Case Study Sub-Questions */}
+                      {Boolean(activeQuestion.subQuestions && activeQuestion.subQuestions.length > 0) && (
+                        <div className="mt-5 space-y-4">
+                          {activeQuestion.subQuestions.map(sub => (
+                            <div key={sub.qNo} className="p-4 bg-indigo-50/40 rounded-2xl border border-indigo-100">
+                              <h5 className="font-bold text-xs sm:text-sm text-slate-900 mb-2">
+                                Question - {sub.qNo}: {sub.question}
+                              </h5>
+                              <div className="space-y-1.5">
+                                {sub.options.map((sOpt, sIdx) => {
+                                  const sLetter = String.fromCharCode(65 + sIdx);
+                                  const isSubChosen = caseStudyAnswers[sub.qNo] === sLetter;
+                                  const isSubCorrect = sub.correctOption === sLetter;
+
+                                  let sStyle = 'bg-white border-slate-200 hover:bg-slate-50 text-slate-800';
+                                  if (showAnswer) {
+                                    if (isSubCorrect) sStyle = 'bg-emerald-50 border-emerald-500 text-emerald-950 font-bold';
+                                    else if (isSubChosen && !isSubCorrect) sStyle = 'bg-rose-50 border-rose-400 text-rose-950';
+                                  } else if (isSubChosen) {
+                                    sStyle = 'bg-indigo-600 text-white font-bold';
+                                  }
+
+                                  return (
+                                    <div
+                                      key={sIdx}
+                                      onClick={() => setCaseStudyAnswers(prev => ({ ...prev, [sub.qNo]: sLetter }))}
+                                      className={`p-2.5 rounded-xl border text-xs cursor-pointer transition ${sStyle}`}
+                                    >
+                                      <span><b>{sLetter}.</b> {sOpt}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+
+                              {showAnswer && (
+                                <div className="mt-3 p-3 bg-white rounded-xl border border-emerald-200 text-xs text-slate-700">
+                                  <span className="font-bold text-emerald-700">Correct Answer: {sub.correctOption}</span>
+                                  <p className="mt-1 text-[11px] text-slate-600">{sub.reason}</p>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Show / Hide Answer Toggle Button */}
+                  {(modalMode === 'Both' || modalMode === 'Question') && (
+                    <div className="pt-2">
+                      <button
+                        onClick={() => setShowAnswer(!showAnswer)}
+                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition cursor-pointer shadow-xs"
+                      >
+                        {showAnswer ? 'Hide Answer' : 'Show Answer'}
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Answer & Statutory Reasoning Section */}
+                  {(showAnswer || modalMode === 'Answer') && (
+                    <div className="p-4 sm:p-5 bg-purple-50/50 rounded-2xl border border-purple-200 text-xs sm:text-sm text-slate-800 leading-relaxed animate-in fade-in">
+                      {activeQuestion.correctOption && (
+                        <div className="mb-2">
+                          <span className="px-3 py-1 rounded-full bg-emerald-600 text-white font-mono font-bold text-xs inline-block">
+                            Answer - {activeQuestion.correctOption}
+                          </span>
+                        </div>
+                      )}
+
+                      {activeQuestion.reason && (
+                        <div className="mt-2 text-slate-700">
+                          <div className="font-bold font-mono text-purple-900 uppercase text-xs mb-1">Reason &amp; Statutory Analysis:</div>
+                          <p>{activeQuestion.reason}</p>
+                        </div>
+                      )}
+
+                      {activeQuestion.answer && (
+                        <div
+                          className="prose prose-xs max-w-none text-slate-800"
+                          dangerouslySetInnerHTML={{ __html: activeQuestion.answer }}
+                        />
+                      )}
+                    </div>
+                  )}
+
+                  {/* Personal Notes Drawer */}
+                  {showNotesDrawer && (
+                    <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 animate-in slide-in-from-bottom-2">
+                      <label className="block text-xs font-mono font-bold text-amber-900 uppercase mb-1">
+                        Personal Study Notes for Question-{activeQuestion.qNo}:
+                      </label>
+                      <textarea
+                        rows="3"
+                        value={currentNoteText}
+                        onChange={(e) => setCurrentNoteText(e.target.value)}
+                        placeholder="Write your personal formulas, memory shortcuts, or exam traps here..."
+                        className="w-full p-2.5 bg-white border border-amber-300 rounded-xl text-xs outline-none focus:border-amber-600"
+                      />
+                      <div className="flex justify-end gap-2 mt-2">
+                        <button
+                          onClick={() => setShowNotesDrawer(false)}
+                          className="px-3 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold cursor-pointer"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleSaveNote}
+                          className="px-4 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold cursor-pointer"
+                        >
+                          Save Note
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+
+                {/* Modal Footer Bar */}
+                <div className="p-3 sm:p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs font-bold">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleNavigateQuestion('prev')}
+                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                    >
+                      <span>← Previous</span>
+                    </button>
+                    <button
+                      onClick={() => handleNavigateQuestion('next')}
+                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                    >
+                      <span>Next →</span>
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => setShowNotesDrawer(!showNotesDrawer)}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                  >
+                    <span>Notes</span>
+                    <span>{showNotesDrawer ? '▼' : '▲'}</span>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          )}
+
+
+
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>

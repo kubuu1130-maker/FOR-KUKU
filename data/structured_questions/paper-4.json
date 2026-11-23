@@ -1,0 +1,291 @@
+[
+  {
+    "paper": "paper-4",
+    "position": 1,
+    "original_id": "p4_q1a_marginal",
+    "source_url": "https://www.castudypartner.com/questions/9e78ccb9f4",
+    "title": "Question-1(a)",
+    "topic": "Marginal Costing",
+    "sub_topic": "Break-Even Point, P/V Ratio & Margin of Safety",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "7",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Marginal Costing (Break-Even Point, P/V Ratio & Margin of Safety) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "table",
+        "caption": "Statutory Analytical Table",
+        "html": "<table class=\"w-full text-xs border border-slate-400 border-collapse my-2\"><tr class=\"bg-indigo-50 font-bold\"><th class=\"border p-2\">Item</th><th class=\"border p-2 text-right\">Details</th></tr><tr><td class=\"border p-2 font-semibold\">Statutory Basis</td><td class=\"border p-2 text-right\">MARGINAL_COSTING_BEP</td></tr></table>"
+      },
+      {
+        "type": "answer",
+        "title": "Answer-1(a)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Marginal Costing."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3",
+        "Part 4",
+        "Part 5"
+      ],
+      "tables": [
+        {
+          "id": "table_1"
+        }
+      ]
+    }
+  },
+  {
+    "paper": "paper-4",
+    "position": 2,
+    "original_id": "p4_q1b_stdcost",
+    "source_url": "https://www.castudypartner.com/questions/9e78ccb9f4",
+    "title": "Question-1(b)",
+    "topic": "Standard Costing",
+    "sub_topic": "Material Cost, Price & Usage Variances",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "7",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Standard Costing (Material Cost, Price & Usage Variances) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "table",
+        "caption": "Statutory Analytical Table",
+        "html": "<table class=\"w-full text-xs border border-slate-400 border-collapse my-2\"><tr class=\"bg-indigo-50 font-bold\"><th class=\"border p-2\">Item</th><th class=\"border p-2 text-right\">Details</th></tr><tr><td class=\"border p-2 font-semibold\">Statutory Basis</td><td class=\"border p-2 text-right\">MATERIAL_VARIANCES</td></tr></table>"
+      },
+      {
+        "type": "answer",
+        "title": "Answer-1(b)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Standard Costing."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3"
+      ],
+      "tables": [
+        {
+          "id": "table_1"
+        }
+      ]
+    }
+  },
+  {
+    "paper": "paper-4",
+    "position": 3,
+    "original_id": "p4_q2a_abc",
+    "source_url": "https://www.castudypartner.com/questions/9e78ccb9f4",
+    "title": "Question-2(a)",
+    "topic": "Activity Based Costing (ABC)",
+    "sub_topic": "Cost Driver Rates & Product Profitability",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "10",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Activity Based Costing (ABC) (Cost Driver Rates & Product Profitability) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "table",
+        "caption": "Statutory Analytical Table",
+        "html": "<table class=\"w-full text-xs border border-slate-400 border-collapse my-2\"><tr class=\"bg-indigo-50 font-bold\"><th class=\"border p-2\">Item</th><th class=\"border p-2 text-right\">Details</th></tr><tr><td class=\"border p-2 font-semibold\">Statutory Basis</td><td class=\"border p-2 text-right\">ABC_COSTING_DRIVERS</td></tr></table>"
+      },
+      {
+        "type": "answer",
+        "title": "Answer-2(a)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Activity Based Costing (ABC)."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2"
+      ],
+      "tables": [
+        {
+          "id": "table_1"
+        },
+        {
+          "id": "table_2"
+        }
+      ]
+    }
+  },
+  {
+    "paper": "paper-4",
+    "position": 4,
+    "original_id": "p4_q2b_labour",
+    "source_url": "https://www.castudypartner.com/questions/9e78ccb9f4",
+    "title": "Question-2(b)",
+    "topic": "Employee Cost",
+    "sub_topic": "Halsey vs Rowan Incentive Schemes",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "5",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Employee Cost (Halsey vs Rowan Incentive Schemes) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "table",
+        "caption": "Statutory Analytical Table",
+        "html": "<table class=\"w-full text-xs border border-slate-400 border-collapse my-2\"><tr class=\"bg-indigo-50 font-bold\"><th class=\"border p-2\">Item</th><th class=\"border p-2 text-right\">Details</th></tr><tr><td class=\"border p-2 font-semibold\">Statutory Basis</td><td class=\"border p-2 text-right\">HALSEY_ROWAN_LABOUR</td></tr></table>"
+      },
+      {
+        "type": "answer",
+        "title": "Answer-2(b)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Employee Cost."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2"
+      ],
+      "tables": [
+        {
+          "id": "table_1"
+        }
+      ]
+    }
+  },
+  {
+    "paper": "paper-4",
+    "position": 5,
+    "original_id": "p4_q3a_process",
+    "source_url": "https://www.castudypartner.com/questions/9e78ccb9f4",
+    "title": "Question-3(a)",
+    "topic": "Process Costing",
+    "sub_topic": "Equivalent Production Units (FIFO Method)",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "8",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Process Costing (Equivalent Production Units (FIFO Method)) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "table",
+        "caption": "Statutory Analytical Table",
+        "html": "<table class=\"w-full text-xs border border-slate-400 border-collapse my-2\"><tr class=\"bg-indigo-50 font-bold\"><th class=\"border p-2\">Item</th><th class=\"border p-2 text-right\">Details</th></tr><tr><td class=\"border p-2 font-semibold\">Statutory Basis</td><td class=\"border p-2 text-right\">PROCESS_EQUIVALENT_UNITS</td></tr></table>"
+      },
+      {
+        "type": "answer",
+        "title": "Answer-3(a)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Process Costing."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3"
+      ],
+      "tables": [
+        {
+          "id": "table_1"
+        },
+        {
+          "id": "table_2"
+        }
+      ]
+    }
+  },
+  {
+    "paper": "paper-4",
+    "position": 6,
+    "original_id": "p4_q3b_costsheet",
+    "source_url": "https://www.castudypartner.com/questions/9e78ccb9f4",
+    "title": "Question-3(b)",
+    "topic": "Unit and Batch Costing",
+    "sub_topic": "Cost Sheet Preparation",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "6",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Unit and Batch Costing (Cost Sheet Preparation) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "table",
+        "caption": "Statutory Analytical Table",
+        "html": "<table class=\"w-full text-xs border border-slate-400 border-collapse my-2\"><tr class=\"bg-indigo-50 font-bold\"><th class=\"border p-2\">Item</th><th class=\"border p-2 text-right\">Details</th></tr><tr><td class=\"border p-2 font-semibold\">Statutory Basis</td><td class=\"border p-2 text-right\">COST_SHEET_PREPARATION</td></tr></table>"
+      },
+      {
+        "type": "answer",
+        "title": "Answer-3(b)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Unit and Batch Costing."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3",
+        "Part 4"
+      ],
+      "tables": [
+        {
+          "id": "table_1"
+        }
+      ]
+    }
+  }
+]

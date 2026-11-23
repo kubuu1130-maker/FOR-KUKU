@@ -1,0 +1,236 @@
+[
+  {
+    "paper": "paper-5",
+    "position": 1,
+    "original_id": "p5_q1a_sa230",
+    "source_url": "https://www.castudypartner.com/questions/2d9c667f90",
+    "title": "Question-1(a)",
+    "topic": "Audit Documentation",
+    "sub_topic": "SA 230 - Audit Documentation & Retention Requirements",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "6",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Audit Documentation (SA 230 - Audit Documentation & Retention Requirements) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "answer",
+        "title": "Answer-1(a)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Audit Documentation."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3"
+      ],
+      "tables": []
+    }
+  },
+  {
+    "paper": "paper-5",
+    "position": 2,
+    "original_id": "p5_q1b_sa705",
+    "source_url": "https://www.castudypartner.com/questions/2d9c667f90",
+    "title": "Question-1(b)",
+    "topic": "Audit Report",
+    "sub_topic": "SA 705 - Modifications to the Opinion",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "6",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Audit Report (SA 705 - Modifications to the Opinion) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "table",
+        "caption": "Statutory Analytical Table",
+        "html": "<table class=\"w-full text-xs border border-slate-400 border-collapse my-2\"><tr class=\"bg-indigo-50 font-bold\"><th class=\"border p-2\">Item</th><th class=\"border p-2 text-right\">Details</th></tr><tr><td class=\"border p-2 font-semibold\">Statutory Basis</td><td class=\"border p-2 text-right\">SA_705_OPINION_MODIFICATION</td></tr></table>"
+      },
+      {
+        "type": "answer",
+        "title": "Answer-1(b)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Audit Report."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2"
+      ],
+      "tables": [
+        {
+          "id": "table_1"
+        }
+      ]
+    }
+  },
+  {
+    "paper": "paper-5",
+    "position": 3,
+    "original_id": "p5_q2a_caro",
+    "source_url": "https://www.castudypartner.com/questions/2d9c667f90",
+    "title": "Question-2(a)",
+    "topic": "Audit Report",
+    "sub_topic": "CARO 2020 Reporting Clauses",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "6",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Audit Report (CARO 2020 Reporting Clauses) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "answer",
+        "title": "Answer-2(a)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Audit Report."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3"
+      ],
+      "tables": []
+    }
+  },
+  {
+    "paper": "paper-5",
+    "position": 4,
+    "original_id": "p5_q2b_sa505",
+    "source_url": "https://www.castudypartner.com/questions/2d9c667f90",
+    "title": "Question-2(b)",
+    "topic": "Audit Evidence",
+    "sub_topic": "SA 505 - External Confirmations",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "5",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Audit Evidence (SA 505 - External Confirmations) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "answer",
+        "title": "Answer-2(b)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Audit Evidence."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2"
+      ],
+      "tables": []
+    }
+  },
+  {
+    "paper": "paper-5",
+    "position": 5,
+    "original_id": "p5_q3a_sa315",
+    "source_url": "https://www.castudypartner.com/questions/2d9c667f90",
+    "title": "Question-3(a)",
+    "topic": "Risk Assessment and Internal Control",
+    "sub_topic": "SA 315 - Identifying and Assessing Risks of Material Misstatement",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "6",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Risk Assessment and Internal Control (SA 315 - Identifying and Assessing Risks of Material Misstatement) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "answer",
+        "title": "Answer-3(a)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Risk Assessment and Internal Control."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2",
+        "Part 3"
+      ],
+      "tables": []
+    }
+  },
+  {
+    "paper": "paper-5",
+    "position": 6,
+    "original_id": "p5_q3b_sqc1",
+    "source_url": "https://www.castudypartner.com/questions/2d9c667f90",
+    "title": "Question-3(b)",
+    "topic": "Ethics and Terms of Audit Engagements",
+    "sub_topic": "SQC 1 - Quality Control for Audit Firms",
+    "source": "MTP-01",
+    "year": "JAN, 2027",
+    "marks": "6",
+    "flow": [
+      "view_both",
+      "view_question",
+      "view_answer",
+      "mark_read",
+      "mark_important"
+    ],
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Official statutory problem for Ethics and Terms of Audit Engagements (SQC 1 - Quality Control for Audit Firms) under ICAI New Scheme Jan 2027 attempt."
+      },
+      {
+        "type": "answer",
+        "title": "Answer-3(b)",
+        "content": "Comprehensive statutory analysis and computation complying with ICAI Standards and Companies Act / Income Tax / GST provisions for Ethics and Terms of Audit Engagements."
+      }
+    ],
+    "meta": {
+      "sub_parts": [
+        "Part 1",
+        "Part 2"
+      ],
+      "tables": []
+    }
+  }
+]
